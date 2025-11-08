@@ -35,7 +35,8 @@ NDK_ROOT="${NDK_ROOT/#\~/$HOME}"
 #This won't work on 32-bit Linux.  
 
 # android ndks seem to not come with gcc now, so had to get this from https://android.googlesource.com/platform/prebuilts/gcc/darwin-x86/aarch64/aarch64-linux-android-4.9, commit with hash bfa12bb
-# users should download it (>300 Mb) and suitably adjust 'path_to' below
+# mac users should download it (>300 Mb) and suitably adjust 'path_to' below
+# linux users may need https://github.com/Adrilaw/aarch64-linux-android-4.9-toolchain instead
 ANDROID_GCC_DIR="path_to/aarch64-linux-android-4.9/bin"
 SYSROOT="$NDK_ROOT/platforms/android-21/arch-arm64"
 STD_LIBRARY_LOCATION="$SYSROOT/usr/lib"
