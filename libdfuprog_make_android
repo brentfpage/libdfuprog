@@ -33,9 +33,12 @@ fi
 #I don't quite understand this.  Need to get good at bash...
 NDK_ROOT="${NDK_ROOT/#\~/$HOME}"
 #This won't work on 32-bit Linux.  
-ANDROID_GCC_DIR="$NDK_ROOT/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin"
-SYSROOT="$NDK_ROOT/platforms/android-16/arch-arm"
-STD_LIBRARY_LOCATION="$SYSROOT/arch-arm/usr/lib"
+
+# android ndks seem to not come with gcc now, so had to get this from https://android.googlesource.com/platform/prebuilts/gcc/darwin-x86/aarch64/aarch64-linux-android-4.9, commit with hash bfa12bb
+# users should download it (>300 Mb) and suitably adjust 'path_to' below
+ANDROID_GCC_DIR="path_to/aarch64-linux-android-4.9/bin"
+SYSROOT="$NDK_ROOT/platforms/android-21/arch-arm64"
+STD_LIBRARY_LOCATION="$SYSROOT/usr/lib"
 
 #Check that the sysroot exists
 echo "Checking for directory $SYSROOT"
@@ -63,11 +66,22 @@ echo
 
 #Configure to make it all using the NDK
 
+
+# two new include directories below contain header files that were not located in the android ndk.
+# they were downloaded via the tgz links at
+#   https://android.googlesource.com/platform/development/+/ndk-r16/ndk/platforms/android-21/arch-arm64/include/
+#   and
+#   https://android.googlesource.com/platform/development/+/ndk-r16/ndk/platforms/android-21/include/
+
 export PATH=$ANDROID_GCC_DIR:$PATH
-export CC="arm-linux-androideabi-gcc -fPIC -L$PWD/src/libusb-242 --sysroot=$SYSROOT -llog"
+export CC="aarch64-linux-android-gcc -fPIC -L$PWD/src/libusb-242/arm64-v8a --sysroot=$SYSROOT -llog -I$PWD/development-ndk-r16-ndk-platforms-android-21-include -I$PWD/development-ndk-r16-ndk-platforms-android-21-arch-arm64-include"
 
 
-./configure --host=arm-linux-androideabi
+# hopefully correct; prevent a package handler from finding a different version of libusb
+export LIBUSB_1_0_CFLAGS="-I$PWD/src/libusb-242/include"
+export LIBUSB_1_0_LIBS="-L$PWD/src/libusb-242/arm64-v8a -lusb1.0"
+
+./configure --host=aarch64-linux-android --disable-dependency-tracking
 
 echo
 echo "PATCHING SOURCE FOR ANDROID..."
@@ -96,7 +110,8 @@ echo
 
 cd src
 
-arm-linux-androideabi-gcc -shared -g -Wall -O2 -L/users/esposch/desktop/dfu-programmer-master/src -o libdfuprog-0.9.so main.o arguments.o atmel.o commands.o dfu.o intel_hex.o stm32.o util.o -L"$PWD/libusb-242" -lusb-1.0 --sysroot="$SYSROOT"
+echo $PWD
+aarch64-linux-android-gcc -shared -g -Wall -O2 -L/Users/brentfpage/Downloads/libdfuprog-master/src -o libdfuprog-0.9.so main.o arguments.o atmel.o commands.o dfu.o intel_hex.o stm32.o util.o -L"$PWD/libusb-242/arm64_v8a -lusb1.0" --sysroot="$SYSROOT"
 
 echo
 echo Build complete!!

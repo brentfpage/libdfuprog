@@ -159,18 +159,7 @@ int32_t dfu_abort( dfu_device_t *device );
  */
 
 
-#ifdef HAVE_LIBUSB_1_0
-struct libusb_device
-#else
-struct usb_device
-#endif
-                     *dfu_device_init( const uint32_t vendor,
-                                       const uint32_t product,
-                                       const uint32_t bus,
-                                       const uint32_t dev_addr,
-                                       dfu_device_t *device,
-                                       const dfu_bool initial_abort,
-                                       const dfu_bool honor_interfaceclass );
+int dfu_device_init(dfu_device_t *device, const dfu_bool initial_abort);
 /*  dfu_device_init is designed to find one of the usb devices which match
  *  the vendor and product parameters passed in.
  *

@@ -35,6 +35,7 @@
 #include "dfu.h"
 #include "util.h"
 #include "dfu-bool.h"
+//#include "android_logging.h"
 
 /* DFU commands */
 #define DFU_DETACH      0
@@ -61,8 +62,11 @@
 #define DFU_TRACE_THRESHOLD         200
 #define DFU_MESSAGE_DEBUG_THRESHOLD 300
 
-#define DEBUG(...)  dfu_debug( __FILE__, __FUNCTION__, __LINE__, \
-                               DFU_DEBUG_THRESHOLD, __VA_ARGS__ )
+//#define DEBUG(...)  dfu_debug( __FILE__, __FUNCTION__, __LINE__,
+//                               DFU_DEBUG_THRESHOLD, __VA_ARGS__ )
+
+#define DEBUG(...) fprintf(stderr, __VA_ARGS__)
+
 #define TRACE(...)  dfu_debug( __FILE__, __FUNCTION__, __LINE__, \
                                DFU_TRACE_THRESHOLD, __VA_ARGS__ )
 #define MSG_DEBUG(...)  dfu_debug( __FILE__, __FUNCTION__, __LINE__, \
@@ -312,99 +316,22 @@ int32_t dfu_abort( dfu_device_t *device ) {
     return result;
 }
 
+#define HAVE_LIBUSB_1_0 1
 #ifdef HAVE_LIBUSB_1_0
-struct libusb_device *dfu_device_init( const uint32_t vendor,
-                                       const uint32_t product,
-                                       const uint32_t bus_number,
-                                       const uint32_t device_address,
-                                       dfu_device_t *dfu_device,
-                                       const dfu_bool initial_abort,
-                                       const dfu_bool honor_interfaceclass ) {
-    libusb_device **list;
-    size_t i,devicecount;
-    extern libusb_context *usbcontext;
-    int32_t retries = 4;
-
-    TRACE( "%s( %u, %u, %p, %s, %s )\n", __FUNCTION__, vendor, product,
-           dfu_device, ((true == initial_abort) ? "true" : "false"),
-           ((true == honor_interfaceclass) ? "true" : "false") );
-
-    DEBUG( "%s(%08x, %08x)\n",__FUNCTION__, vendor, product );
-
-retry:
-    devicecount = libusb_get_device_list( usbcontext, &list );
-
-    for( i = 0; i < devicecount; i++ ) {
-        libusb_device *device = list[i];
-        struct libusb_device_descriptor descriptor;
-
-        if( libusb_get_device_descriptor(device, &descriptor) ) {
-             DEBUG( "Failed in libusb_get_device_descriptor\n" );
-             break;
-        }
-
-        DEBUG( "%2d: 0x%04x, 0x%04x\n", (int) i,
-                descriptor.idVendor, descriptor.idProduct );
-
-        if( (vendor  == descriptor.idVendor) &&
-            (product == descriptor.idProduct) &&
-            ((bus_number == 0)
-             || ((libusb_get_bus_number(device) == bus_number) &&
-                 (libusb_get_device_address(device) == device_address))) )
+int dfu_device_init( dfu_device_t *dfu_device, const dfu_bool initial_abort) {
+    int retries = 6;
+    while(retries > 0){
+        switch( dfu_make_idle(dfu_device, initial_abort) )
         {
-            int32_t tmp;
-            DEBUG( "found device at USB:%d,%d\n", libusb_get_bus_number(device), libusb_get_device_address(device) );
-            /* We found a device that looks like it matches...
-             * let's try to find the DFU interface, open the device
-             * and claim it. */
-            tmp = dfu_find_interface( device, honor_interfaceclass,
-                                      descriptor.bNumConfigurations );
-
-            if( 0 <= tmp ) {    /* The interface is valid. */
-                dfu_device->interface = tmp;
-
-                if( 0 == libusb_open(device, &dfu_device->handle) ) {
-                    DEBUG( "opened interface %d...\n", tmp );
-                    if( 0 == libusb_set_configuration(dfu_device->handle, 1) ) {
-                        DEBUG( "set configuration %d...\n", 1 );
-                        if( 0 == libusb_claim_interface(dfu_device->handle, dfu_device->interface) )
-                        {
-                            DEBUG( "claimed interface %d...\n", dfu_device->interface );
-
-                            switch( dfu_make_idle(dfu_device, initial_abort) )
-                            {
-                                case 0:
-                                    libusb_free_device_list( list, 1 );
-                                    return device;
-
-                                case 1:
-                                    retries--;
-                                    libusb_free_device_list( list, 1 );
-                                    goto retry;
-                            }
-
-                            DEBUG( "Failed to put the device in dfuIDLE mode.\n" );
-                            libusb_release_interface( dfu_device->handle, dfu_device->interface );
-                            retries = 4;
-                        } else {
-                            DEBUG( "Failed to claim the DFU interface.\n" );
-                        }
-                    } else {
-                        DEBUG( "Failed to set configuration.\n" );
-                    }
-
-                    libusb_close(dfu_device->handle);
-                }
-            }
+            case 0:
+                return 0;
+            case 1:
+                retries--;
         }
     }
-
-    libusb_free_device_list( list, 1 );
-    dfu_device->handle = NULL;
-    dfu_device->interface = 0;
-
-    return NULL;
+    return 1;
 }
+
 #else
 struct usb_device *dfu_device_init( const uint32_t vendor,
                                     const uint32_t product,
