@@ -13,7 +13,10 @@ It also adds support for Android versions 4 and later (including 7 and I think 8
 
 To build it, run bootstrap.sh, then libdfuprog_make_<your_platform_here>.
 You might need some prerequisites; check the original dfu-programmer page as well as libdfuprog_instructions in this repo.
-You may also need to change the permissions of the build script to get it to run, e.g., via 'chmod u+x libdfuprog_make_<your_platform_here>'
+You may also need to change the permissions of the build script to get it to run, e.g., via 'chmod u+x libdfuprog_make_<your_platform_here>'.
+In addition, for arm64_v8a android builds (for which the 'adjustments-for-arm64_v8a' branch is appropriate), it will be necessary to change 
+'path_to' in libdfuprog_make_android to a path leading to gcc.  Lastly, as commented on in that branch/file, in may be necessary to download
+a fit-for-purpose version of gcc. 
 
 After building, rename main.h to libdfuprog.h (AFTER building), and then add it to your includes.  Also don't forget to add libdfuprog-0.9.so to your libs.  :)
 
