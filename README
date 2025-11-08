@@ -1,9 +1,19 @@
+
+11/7/2025
+The 'adjustments-for-arm64_v8a' branch of this fork of libdfuprog features the following changes
+
+- adjustments of some library and include paths in libdfuprog_make_android so that aarch64 versions are used
+- addition of some dependencies that may not come with official android ndks
+- addition in /src/libusb-242/arm64-v8a of a 64 bit version of libusb.so fromhttps://github.com/louisgeek/LG_libusb_Android/tree/main 
+
+---------------------------------------------------------------
 libdfuprog is a fork of dfu-programmer with a bunch of hacky build scripts added so you can build it as a dynamic library.
 
 It also adds support for Android versions 4 and later (including 7 and I think 8), via Vianney le Clément de Saint-Marcq's libusb fork.
 
 To build it, run bootstrap.sh, then libdfuprog_make_<your_platform_here>.
 You might need some prerequisites; check the original dfu-programmer page as well as libdfuprog_instructions in this repo.
+You may also need to change the permissions of the build script to get it to run, e.g., via 'chmod u+x libdfuprog_make_<your_platform_here>'
 
 After building, rename main.h to libdfuprog.h (AFTER building), and then add it to your includes.  Also don't forget to add libdfuprog-0.9.so to your libs.  :)
 
