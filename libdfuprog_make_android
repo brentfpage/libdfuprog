@@ -113,7 +113,7 @@ echo
 cd src
 
 echo $PWD
-aarch64-linux-android-gcc -shared -g -Wall -O2 -L/Users/brentfpage/Downloads/libdfuprog-master/src -o libdfuprog-0.9.so main.o arguments.o atmel.o commands.o dfu.o intel_hex.o stm32.o util.o -L"$PWD/libusb-242/arm64-v8a" -lusb1.0 --sysroot="$SYSROOT"
+aarch64-linux-android-gcc -shared -Wl,-soname,"libdfuprog-0.9.so" -g -Wall -O3 -s -Wl,-z,max-page-size=16384 -L/Users/brentfpage/Downloads/libdfuprog-master/src -o libdfuprog-0.9.so main.o arguments.o atmel.o commands.o dfu.o intel_hex.o stm32.o util.o -L"$PWD/libusb-242/arm64-v8a" -lusb1.0 --sysroot="$SYSROOT"
 
 echo
 echo Build complete!!
