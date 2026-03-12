@@ -16,9 +16,19 @@
  ***
  ****************************************************************************
  ****************************************************************************/
-#ifndef __ASM_SIGINFO_H
-#define __ASM_SIGINFO_H
-#define __ARCH_SI_PREAMBLE_SIZE (4 * sizeof(int))
-#include <asm-generic/siginfo.h>
+#ifndef __ARCH_ARM_POSIX_TYPES_H
+#define __ARCH_ARM_POSIX_TYPES_H
+typedef unsigned short __kernel_mode_t;
+#define __kernel_mode_t __kernel_mode_t
+/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */
+typedef unsigned short __kernel_ipc_pid_t;
+#define __kernel_ipc_pid_t __kernel_ipc_pid_t
+typedef unsigned short __kernel_uid_t;
+typedef unsigned short __kernel_gid_t;
+/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */
+#define __kernel_uid_t __kernel_uid_t
+typedef unsigned short __kernel_old_dev_t;
+#define __kernel_old_dev_t __kernel_old_dev_t
+#include <asm-generic/posix_types.h>
 /* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */
 #endif

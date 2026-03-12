@@ -16,9 +16,8 @@
  ***
  ****************************************************************************
  ****************************************************************************/
-#ifndef __ASM_STATFS_H
-#define __ASM_STATFS_H
-#define ARCH_PACK_COMPAT_STATFS64 __attribute__((packed,aligned(4)))
-#include <asm-generic/statfs.h>
-/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */
+#ifndef __ASM_ARM_BYTEORDER_H
+#define __ASM_ARM_BYTEORDER_H
+#include <linux/byteorder/little_endian.h>
 #endif
+/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */

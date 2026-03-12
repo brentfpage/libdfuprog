@@ -16,9 +16,5 @@
  ***
  ****************************************************************************
  ****************************************************************************/
-#ifndef __ASM_SIGNAL_H
-#define __ASM_SIGNAL_H
-#define SA_RESTORER 0x04000000
-#include <asm-generic/signal.h>
-/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */
-#endif
+#include <asm-generic/mman.h>
+#define arch_mmap_check(addr, len, flags)   (((flags) & MAP_FIXED && (addr) < FIRST_USER_ADDRESS) ? -EINVAL : 0)

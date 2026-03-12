@@ -16,8 +16,33 @@
  ***
  ****************************************************************************
  ****************************************************************************/
-#ifndef __ASM_AUXVEC_H
-#define __ASM_AUXVEC_H
-#define AT_SYSINFO_EHDR 33
+#ifndef __ARM_A_OUT_H__
+#define __ARM_A_OUT_H__
+#include <linux/personality.h>
+#include <linux/types.h>
+/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */
+struct exec
+{
+ __u32 a_info;
+ __u32 a_text;
+/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */
+ __u32 a_data;
+ __u32 a_bss;
+ __u32 a_syms;
+ __u32 a_entry;
+/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */
+ __u32 a_trsize;
+ __u32 a_drsize;
+};
+#define N_TXTADDR(a) (0x00008000)
+/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */
+#define N_TRSIZE(a) ((a).a_trsize)
+#define N_DRSIZE(a) ((a).a_drsize)
+#define N_SYMSIZE(a) ((a).a_syms)
+#define M_ARM 103
+/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */
+#ifndef LIBRARY_START_TEXT
+#define LIBRARY_START_TEXT (0x00c00000)
+#endif
 #endif
 /* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */

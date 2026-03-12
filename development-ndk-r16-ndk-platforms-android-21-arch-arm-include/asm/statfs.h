@@ -16,13 +16,9 @@
  ***
  ****************************************************************************
  ****************************************************************************/
-#ifndef __ASM_FCNTL_H
-#define __ASM_FCNTL_H
-#define O_DIRECTORY 040000
-#define O_NOFOLLOW 0100000
+#ifndef _ASMARM_STATFS_H
+#define _ASMARM_STATFS_H
+#define ARCH_PACK_STATFS64 __attribute__((packed,aligned(4)))
+#include <asm-generic/statfs.h>
 /* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */
-#define O_DIRECT 0200000
-#define O_LARGEFILE 0400000
-#include <asm-generic/fcntl.h>
 #endif
-/* WARNING: DO NOT EDIT, AUTO-GENERATED CODE - SEE TOP FOR INSTRUCTIONS */
