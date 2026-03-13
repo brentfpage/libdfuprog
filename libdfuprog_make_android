@@ -16,17 +16,18 @@ esac
 echo
 echo "Please note that if you're using a 32-bit version of the NDK, you'll need to manually set ANDROID_GCC_DIR in the shell script"
 echo 
+# 
+# #I got sick of typing in my dir every time I tested the script
+# if [ -d "/home/esposch/android-ndk-r15c" ]; then
+# 	NDK_ROOT="/home/esposch/android-ndk-r15c"
+# else
+# 	#Get NDK location
+# 	echo "Please enter the location of your Android NDK root directory (e.g. '~/android-ndk-r15c')"
+# 	read NDK_ROOT
+# 	echo
+# fi
 
-#I got sick of typing in my dir every time I tested the script
-if [ -d "/home/esposch/android-ndk-r15c" ]; then
-	NDK_ROOT="/home/esposch/android-ndk-r15c"
-else
-	#Get NDK location
-	echo "Please enter the location of your Android NDK root directory (e.g. '~/android-ndk-r15c')"
-	read NDK_ROOT
-	echo
-fi
-
+NDK_ROOT="/Users/brentfpage/Desktop/NDK/"
 #Extracting directories from the NDK root.
 
 #https://stackoverflow.com/questions/3963716/how-to-manually-expand-a-special-variable-ex-tilde-in-bash/27485157#27485157
@@ -36,7 +37,7 @@ NDK_ROOT="${NDK_ROOT/#\~/$HOME}"
 
 # android ndks seem to not come with gcc now, so had to get this from https://android.googlesource.com/platform/prebuilts/gcc/darwin-x86/arm/arm-linux-androideabi-4.8/, commit with hash eb88232
 # mac users should download it (>300 Mb) and suitably adjust 'PATH_TO' below
-PATH_TO=/Users/brentfpage/arm-linux-androideabi-4.8-eb88232b83f26103e9ccc104e7cd5bf79e83fe9f
+PATH_TO=/Users/brentfpage/arm-linux-androideabi-4.8-eb88232b83f26103e9ccc104e7cd5bf79e83fe9f/
 ANDROID_GCC_DIR="$PATH_TO/arm-linux-androideabi/bin"
 SYSROOT="$NDK_ROOT/platforms/android-21/arch-arm"
 STD_LIBRARY_LOCATION="$SYSROOT/usr/lib"
@@ -75,14 +76,14 @@ echo
 #   https://android.googlesource.com/platform/development/+/ndk-r16/ndk/platforms/android-21/include/
 
 export PATH=$ANDROID_GCC_DIR:$PATH
-export CC="aarch64-linux-android-gcc -fPIC -L$PWD/src/libusb-242/armeabi-v7a --sysroot=$SYSROOT -llog -I$PWD/development-ndk-r16-ndk-platforms-android-21-include -I$PWD/development-ndk-r16-ndk-platforms-android-21-arch-arm-include"
+export CC="$ANDROID_GCC_DIR/gcc -fPIC -L$PWD/src/libusb-242/armeabi-v7a --sysroot=$SYSROOT -llog -I$PWD/development-ndk-r16-ndk-platforms-android-21-include -I$PWD/development-ndk-r16-ndk-platforms-android-21-arch-arm-include"
 
 
 # hopefully correct; prevent a package handler from finding a different version of libusb
 export LIBUSB_1_0_CFLAGS="-I$PWD/src/libusb-242/include"
 export LIBUSB_1_0_LIBS="-L$PWD/src/libusb-242/armeabi-v7a -lusb1.0"
 
-./configure --host=aarch64-linux-android --disable-dependency-tracking
+./configure --host=arm-linux-androideabi --disable-dependency-tracking
 
 echo
 echo "PATCHING SOURCE FOR ANDROID..."
@@ -112,7 +113,7 @@ echo
 cd src
 
 echo $PWD
-aarch64-linux-android-gcc -shared -Wl,-soname,"libdfuprog-0.9.so" -g -Wall -O3 -s -Wl,-z,max-page-size=16384 -L/Users/brentfpage/Downloads/libdfuprog-master/src -o libdfuprog-0.9.so main.o arguments.o atmel.o commands.o dfu.o intel_hex.o stm32.o util.o -L"$PWD/libusb-242/armeabi-v7a -lusb1.0 --sysroot="$SYSROOT"
+$ANDROID_GCC_DIR/gcc -shared -Wl,-soname,"libdfuprog-0.9.so" -g -Wall -O3 -s -Wl,-z,max-page-size=16384 -L/Users/brentfpage/Downloads/libdfuprog-master/src -o libdfuprog-0.9.so main.o arguments.o atmel.o commands.o dfu.o intel_hex.o stm32.o util.o -L"$PWD/libusb-242/armeabi-v7a" -lusb1.0 --sysroot="$SYSROOT"
 
 echo
 echo Build complete!!
